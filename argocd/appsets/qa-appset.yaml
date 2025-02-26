@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: my-qa-appset
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: https://github.com/Tim275/kubecraft # Corrected repoURL
+        revision: HEAD
+        directories:
+          - path: argocd/apps/*/envs/qa # Corrected path
+          - path: argocd/infrastructure/cnpg/envs/qa # Corrected path
+  template:
+    metadata:
+      name: "{{ index .path.segments 2 }}-{{ index .path.segments 4 }}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Tim275/kubecraft # Corrected repoURL
+        targetRevision: HEAD
+        path: "{{ .path.path }}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ index .path.segments 2 }}-{{ index .path.segments 4 }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
