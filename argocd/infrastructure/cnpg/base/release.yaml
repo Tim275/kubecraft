@@ -1,18 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: root-argocd-app
+  name: cnpg-operator
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/Tim275/kubecraft # Corrected repoURL
+    repoURL: https://github.com/Tim275/kubecraft.git
     targetRevision: HEAD
-    path: argocd/appsets/qa-appset.yaml # Corrected path
+    path: infrastructure/cnpg/helm
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: cnpg-system
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
