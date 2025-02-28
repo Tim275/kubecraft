@@ -16,6 +16,9 @@ spec:
   template:
     metadata:
       name: '{{ if eq (index .path.segments 1) "infrastructure" }}cnpg-qa{{ else }}{{ index .path.segments 2 }}-qa{{ end }}'
+      annotations:
+        # Set infrastructure to sync before applications
+        argocd.argoproj.io/sync-wave: '{{ if eq (index .path.segments 1) "infrastructure" }}-1{{ else }}0{{ end }}'
     spec:
       project: default
       source:
@@ -31,3 +34,4 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
+          - ServerSideApply=true # Add ServerSideApply to handle large CRDs

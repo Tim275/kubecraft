@@ -25,4 +25,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true # This helps with CRD installation
+      - ServerSideApply=true # This flag handles large CRDs correctly
