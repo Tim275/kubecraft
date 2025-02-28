@@ -5,37 +5,30 @@ metadata:
   namespace: argocd
 spec:
   goTemplate: true
-  goTemplateOptions: ["missingkey=error"]
+  goTemplateOptions:
+    - "missingkey=error"
   generators:
     - git:
-        repoURL: https://github.com/Tim275/kubecraft
+        repoURL: https://github.com/Tim275/kubecraft.git
         revision: HEAD
         directories:
           - path: argocd/apps/*/envs/qa
-          - path: argocd/infrastructure/cnpg/envs/qa # Corrected path
+          - path: argocd/infrastructure/cnpg/envs/qa
   template:
     metadata:
-      name: "{{index .path.segments 2}}-{{index .path.segments 4}}"
+      name: "{{ if eq (index .path.segments 1) 'infrastructure' }}cnpg-qa{{ else }}{{ index .path.segments 2 }}-qa{{ end }}"
     spec:
-      # The project the application belongs to.
       project: default
-
-      # Source of the application manifests
       source:
-        repoURL: https://github.com/Tim275/kubecraft
+        repoURL: https://github.com/Tim275/kubecraft.git
         targetRevision: HEAD
-        path: "{{.path.path}}"
-
-      # Destination cluster and namespace to deploy the application
+        path: "{{ .path.path }}"
       destination:
         server: https://kubernetes.default.svc
-        # namespace: qa-environment
-        namespace: "{{index .path.segments 2}}-{{index .path.segments 4}}"
-
-      # Sync policy
+        namespace: "{{ if eq (index .path.segments 1) 'infrastructure' }}cnpg-system{{ else }}{{ index .path.segments 2 }}-qa{{ end }}"
       syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true
-        automated: # automated sync by default retries failed attempts 5 times with following delays between attempts (5s, 10s, 20s, 40s, 80s); retry controlled using `retry` field.
-          prune: true # Specifies if resources should be pruned during auto-syncing (false by default).
-          selfHeal: true # Specifies if partial sync should be executed when resources are changed only in target Kubernetes cluster and no git change detected (false by default).
