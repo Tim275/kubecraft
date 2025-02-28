@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: my-qa-appset
+  name: my-production-appset
   namespace: argocd
 spec:
   goTemplate: true
@@ -11,11 +11,11 @@ spec:
         repoURL: https://github.com/Tim275/kubecraft.git
         revision: HEAD
         directories:
-          - path: argocd/apps/*/envs/qa
-          - path: argocd/infrastructure/cnpg/envs/qa
+          - path: argocd/apps/*/envs/production
+          - path: argocd/infrastructure/cnpg/envs/production
   template:
     metadata:
-      name: "{{ if eq (index .path.segments 1) 'infrastructure' }}cnpg-qa{{ else }}{{ index .path.segments 2 }}-qa{{ end }}"
+      name: "{{ if eq (index .path.segments 1) 'infrastructure' }}cnpg-production{{ else }}{{ index .path.segments 2 }}-production{{ end }}"
     spec:
       project: default
       source:
@@ -24,7 +24,7 @@ spec:
         path: "{{ .path.path }}"
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{ if eq (index .path.segments 1) 'infrastructure' }}cnpg-system{{ else }}{{ index .path.segments 2 }}-qa{{ end }}"
+        namespace: "{{ if eq (index .path.segments 1) 'infrastructure' }}cnpg-system{{ else }}{{ index .path.segments 2 }}-production{{ end }}"
       syncPolicy:
         syncOptions:
           - CreateNamespace=true
