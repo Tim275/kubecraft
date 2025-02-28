@@ -6,13 +6,13 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   annotations:
-    argocd.argoproj.io/sync-wave: "1" # Install this after CNPG operator
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   project: default
   source:
-    chart: cloudnative-pg-dashboards
-    repoURL: https://cloudnative-pg.github.io/grafana-dashboards
-    targetRevision: 0.0.3
+    chart: cloudnative-pg-grafana-dashboards # Korrekter Chart-Name
+    repoURL: https://cloudnative-pg.github.io/charts # Offizielles Helm-Repo
+    targetRevision: 0.0.4 # Aktuelle Version (Stand: Juli 2024)
     helm:
       values: |
         grafana:
