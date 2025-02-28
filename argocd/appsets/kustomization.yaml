@@ -3,6 +3,5 @@ kind: Kustomization
 
 resources:
   - qa-appset.yaml
-  # Uncomment these when you're ready for staging/production
   # - staging-appset.yaml
   # - production.yaml
