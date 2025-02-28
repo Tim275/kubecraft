@@ -10,17 +10,16 @@ metadata:
 spec:
   project: default
   source:
-    chart: cloudnative-pg
-    repoURL: https://cloudnative-pg.github.io/charts
-    targetRevision: 0.19.0 # Aktuelle CNPG Version
+    chart: cloudnative-pg-dashboards # Correct chart name
+    repoURL: https://cloudnative-pg.github.io/grafana-dashboards # Correct repo URL
+    targetRevision: 0.0.3 # Same version Mischa uses
     helm:
       values: |
         grafana:
-          dashboards:
-            enabled: true
+          enabled: true
   destination:
     server: https://kubernetes.default.svc
-    namespace: cnpg-system # Namespace des CNPG Operators
+    namespace: monitoring # Correct namespace, matching Mischa's setup
   syncPolicy:
     automated:
       prune: true
