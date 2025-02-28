@@ -6,11 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/Tim275/kubecraft # Corrected repoURL
+    repoURL: https://github.com/Tim275/kubecraft.git
     targetRevision: HEAD
-    path: argocd/appsets/qa-appset.yaml # Corrected path
-    #path: argocd/appsets/production.yaml
-    #path: argocd/appsets/staging-appset.yaml
+    path: argocd/appsets/qa-appset.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
