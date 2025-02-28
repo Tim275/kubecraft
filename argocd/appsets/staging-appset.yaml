@@ -15,7 +15,7 @@ spec:
           - path: argocd/infrastructure/*/envs/staging
   template:
     metadata:
-      name: "{{ index .path.segments 2 }}-staging"
+      name: '{{ if eq (index .path.segments 1) "infrastructure" }}cnpg-staging{{ else }}{{ index .path.segments 2 }}-staging{{ end }}'
     spec:
       project: default
       source:

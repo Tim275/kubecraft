@@ -15,7 +15,7 @@ spec:
           - path: argocd/infrastructure/*/envs/qa
   template:
     metadata:
-      name: "{{ index .path.segments 2 }}-qa"
+      name: '{{ if eq (index .path.segments 1) "infrastructure" }}cnpg-qa{{ else }}{{ index .path.segments 2 }}-qa{{ end }}'
     spec:
       project: default
       source:
