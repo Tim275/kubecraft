@@ -15,7 +15,8 @@ spec:
           - path: argocd/infrastructure/cnpg/envs/qa
   template:
     metadata:
-      name: "{{ if eq (index .path.segments 1) 'infrastructure' }}cnpg-qa{{ else }}{{ index .path.segments 2 }}-qa{{ end }}"
+      # For infrastructure (CNPG) we force the name to "cnpg-qa"
+      name: '{{ if eq (index .path.segments 1) "infrastructure" }}cnpg-qa{{ else }}{{ index .path.segments 2 }}-qa{{ end }}'
     spec:
       project: default
       source:
@@ -24,7 +25,9 @@ spec:
         path: "{{ .path.path }}"
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{ if eq (index .path.segments 1) 'infrastructure' }}cnpg-system{{ else }}{{ index .path.segments 2 }}-qa{{ end }}"
+        # If the overlay path starts with 'infrastructure', then deploy CNPG into cnpg-system;
+        # otherwise, for regular apps use the folder name (e.g. "nginx-qa")
+        namespace: '{{ if eq (index .path.segments 1) "infrastructure" }}cnpg-system{{ else }}{{ index .path.segments 2 }}-qa{{ end }}'
       syncPolicy:
         syncOptions:
           - CreateNamespace=true
