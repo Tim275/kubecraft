@@ -8,29 +8,34 @@ spec:
   goTemplateOptions: ["missingkey=error"]
   generators:
     - git:
-        repoURL: https://github.com/Tim275/kubecraft.git
+        repoURL: https://github.com/Tim275/kubecraft
         revision: HEAD
         directories:
           - path: argocd/apps/*/envs/qa
-          - path: argocd/infrastructure/cnpg/envs/qa
+          - path: argocd/infrastructure/cnpg/envs/qa # Corrected path
   template:
     metadata:
-      # For infrastructure (CNPG) we force the name to "cnpg-qa"
-      name: '{{ if eq (index .path.segments 1) "infrastructure" }}cnpg-qa{{ else }}{{ index .path.segments 2 }}-qa{{ end }}'
+      name: "{{index .path.segments 2}}-{{index .path.segments 4}}"
     spec:
+      # The project the application belongs to.
       project: default
+
+      # Source of the application manifests
       source:
-        repoURL: https://github.com/Tim275/kubecraft.git
+        repoURL: https://github.com/Tim275/kubecraft
         targetRevision: HEAD
-        path: "{{ .path.path }}"
+        path: "{{.path.path}}"
+
+      # Destination cluster and namespace to deploy the application
       destination:
         server: https://kubernetes.default.svc
-        # If the overlay path starts with 'infrastructure', then deploy CNPG into cnpg-system;
-        # otherwise, for regular apps use the folder name (e.g. "nginx-qa")
-        namespace: '{{ if eq (index .path.segments 1) "infrastructure" }}cnpg-system{{ else }}{{ index .path.segments 2 }}-qa{{ end }}'
+        # namespace: qa-environment
+        namespace: "{{index .path.segments 2}}-{{index .path.segments 4}}"
+
+      # Sync policy
       syncPolicy:
         syncOptions:
           - CreateNamespace=true
-        automated:
-          prune: true
-          selfHeal: true
+        automated: # automated sync by default retries failed attempts 5 times with following delays between attempts (5s, 10s, 20s, 40s, 80s); retry controlled using `retry` field.
+          prune: true # Specifies if resources should be pruned during auto-syncing (false by default).
+          selfHeal: true # Specifies if partial sync should be executed when resources are changed only in target Kubernetes cluster and no git change detected (false by default).
