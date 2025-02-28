@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cnpg-operator-with-dashboards
+  name: cnpg-grafana-dashboards
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -10,24 +10,16 @@ metadata:
 spec:
   project: default
   source:
-    chart: cloudnative-pg
-    repoURL: https://cloudnative-pg.github.io/charts
-    targetRevision: 0.20.1 # Neueste stabile Version
+    chart: cloudnative-pg-dashboards
+    repoURL: https://cloudnative-pg.github.io/grafana-dashboards
+    targetRevision: 0.0.3
     helm:
       values: |
         grafana:
-          dashboards:
-            enabled: true
-            namespace: monitoring  # Ziel-Namespace für Dashboards
-
-        webhooks:
-          enabled: true  # Nur im Operator-Application aktivieren
-
-        # Critical Fix: Verhindert Ressourcen-Überlappung
-        fullnameOverride: "cnpg-operator"
+          enabled: true
   destination:
     server: https://kubernetes.default.svc
-    namespace: cnpg-system # Dedizierter Operator-Namespace
+    namespace: monitoring
   syncPolicy:
     automated:
       prune: true
