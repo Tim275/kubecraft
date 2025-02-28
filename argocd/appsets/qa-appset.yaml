@@ -5,18 +5,17 @@ metadata:
   namespace: argocd
 spec:
   goTemplate: true
-  goTemplateOptions:
-    - "missingkey=error"
+  goTemplateOptions: ["missingkey=error"]
   generators:
     - git:
         repoURL: https://github.com/Tim275/kubecraft.git
         revision: HEAD
         directories:
           - path: argocd/apps/*/envs/qa
-          - path: argocd/infrastructure/cnpg/envs/qa
+          - path: argocd/infrastructure/*/envs/qa
   template:
     metadata:
-      name: '{{ if eq (index .path.segments 1) "infrastructure" }}cnpg-qa{{ else }}{{ index .path.segments 2 }}-qa{{ end }}'
+      name: "{{ index .path.segments 2 }}-qa"
     spec:
       project: default
       source:

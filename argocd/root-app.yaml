@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/Tim275/kubecraft.git
     targetRevision: HEAD
-    path: argocd/appsets/qa-appset.yaml
+    path: argocd/appsets
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

@@ -12,10 +12,10 @@ spec:
         revision: HEAD
         directories:
           - path: argocd/apps/*/envs/production
-          - path: argocd/infrastructure/cnpg/envs/production
+          - path: argocd/infrastructure/*/envs/production
   template:
     metadata:
-      name: "{{ if eq (index .path.segments 1) 'infrastructure' }}cnpg-production{{ else }}{{ index .path.segments 2 }}-production{{ end }}"
+      name: "{{ index .path.segments 2 }}-production"
     spec:
       project: default
       source:
@@ -24,10 +24,10 @@ spec:
         path: "{{ .path.path }}"
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{ if eq (index .path.segments 1) 'infrastructure' }}cnpg-system{{ else }}{{ index .path.segments 2 }}-production{{ end }}"
+        namespace: '{{ if eq (index .path.segments 1) "infrastructure" }}cnpg-system{{ else }}{{ index .path.segments 2 }}-production{{ end }}'
       syncPolicy:
-        syncOptions:
-          - CreateNamespace=true
         automated:
           prune: true
           selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
