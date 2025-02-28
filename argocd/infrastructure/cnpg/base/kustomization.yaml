@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - cnpg.yaml
-  - cnpg-grafana.yaml
+  #- cnpg-grafana.yaml
